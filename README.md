@@ -1,4 +1,4 @@
-# Biscoito da Sorte
+# 🍪 Biscoito da Sorte
 
 Aplicativo mobile desenvolvido com React Native + Expo para gerar frases motivacionais ao clicar em um biscoito virtual. O projeto simula a experiência de um biscoito da sorte, com animações, contador de uso, frase favorita e efeitos sonoros.
 
