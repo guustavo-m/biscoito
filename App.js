@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useState, useRef } from "react";
+import { Image, Pressable, StyleSheet, Text, View, ScrollView, Animated } from 'react-native'
+import { useAudioPlayer } from "expo-audio";
 
 export default function App() {
   const frases = [
@@ -29,19 +30,36 @@ export default function App() {
   const [aberto, setAberto] = useState(false)
   const [contador, setContador] = useState(0)
   const [ultimaFrase, setUltimaFrase] = useState("")
+  const [favorita, setFavorita] = useState("")
+  const [corFundo, setCorFundo] = useState("#8591ff")
+
+  const escala = useRef(new Animated.Value(1)).current
+  const opacidade = useRef(new Animated.Value(1)).current
+
+  const player = useAudioPlayer(require("./assets/biscoito-som.mp3"))
+
+  const cores = [
+    "#8591ff",
+    "#9b8cff",
+    "#79c7ff",
+    "#7ed6a5",
+    "#ffd166",
+    "#ff9f68",
+    "#ff8fa3",
+    "#c49cff",
+  ];
 
   function abrirBiscoito() {
-    const indice = Math.floor(Math.random() * frases.length)
-    const fraseSorteada = frases[indice]
-
-    setFrase(fraseSorteada)
+    sortearFrase()
+    setContador((valorAtual) => valorAtual + 1)
     setAberto(true)
+    tocarSom();
   }
 
   function quebrarOutro() {
     sortearFrase()
-
     setContador((valorAtual) => valorAtual + 1)
+    tocarSom()
   }
 
   function limparContador() {
@@ -67,16 +85,57 @@ export default function App() {
 
       setFrase(fraseSorteada);
       setUltimaFrase(fraseSorteada)
+
+      setCorFundo(cores[indice % cores.length])
+
+      animarImagem()
+  }
+
+  function animarImagem() {
+    escala.setValue(0.7)
+    opacidade.setValue(0)
+
+    Animated.parallel([
+      Animated.spring(escala, {
+        toValue: 1,
+        friction: 5,
+        tension: 60,
+        useNativeDriver: true,
+      }),
+
+      Animated.timing(opacidade, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start()
+  }
+
+  function tocarSom() {
+    try {
+      player.seekTo(0)
+      player.play()
+    } catch (error){
+      console.log("Erro ao tocar som: ", error)
+    }
+  }
+
+  function alternarFavorita() {
+    if (favorita === frase) {
+      setFavorita("")
+    } else {
+      setFavorita(frase)
+    }
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{backgroundColor: corFundo}} contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Biscoito da Sorte</Text>
-
       <Text style={styles.contador}>Biscoitos quebrados: {contador}</Text>
 
       {!aberto ? (
         <>
+        <Animated.View style={{transform: [{scale: escala}], opacity: opacidade,}}>
           <Pressable onPress={abrirBiscoito}>
             <Image
               source={require("./assets/biscoito.svg")}
@@ -84,48 +143,69 @@ export default function App() {
               resizeMode="contain"
             />
           </Pressable>
+        </Animated.View>
+        <Text style={styles.instrucao}>Clique no biscoito e se motive !</Text>
 
-          <Text style={styles.instrucao}>Clique no biscoito e se motive !</Text>
+          {ultimaFrase !== "" && (
+            <View style={styles.ultimaCaixa}>
+              <Text style={styles.ultimaTitulo}>📜 Última frase</Text>
+              <Text style={styles.ultimaFrase}>"{ultimaFrase}"</Text>
+            </View>
+          )}
         </>
       ) : (
         <>
+        <Animated.View style={{transform: [{scale: escala}], opacity: opacidade,}}>
           <Image
             source={require("./assets/biscoito-quebrado.svg")}
             style={styles.imagem}
             resizeMode="contain"
           />
-
+        </Animated.View>
 
         <View style={styles.caixaFrase}>
           <Text style={styles.frase}>"{frase}"</Text>
         </View>
+
+        <Pressable style={({ pressed }) => [styles.botaoFavorito, pressed && styles.botaoPressionado,]} onPress={alternarFavorita}>
+            <Text style={styles.textoBotao}>{favorita === frase ? "⭐ Frase favorita" : "☆ Favoritar frase"}</Text>
+        </Pressable>
+
+        {favorita === frase && (
+            <Text style={styles.avisoFavorito}>⭐ Essa é sua frase favorita!</Text>
+        )}
 
         {contador >= 5 && ( 
           <Text style={styles.mensagemEspecial}> 🎉 Você já quebrou 5 biscoitos! Continue ! </Text> 
         )}
 
         <Pressable style={({ pressed }) => [styles.botao, pressed && styles.botaoPressionado]} onPress={quebrarOutro}>
-          <Text style={styles.textoBotao}>Quebrar outro</Text> 
+          <Text style={styles.textoBotao}>🍪 Quebrar outro</Text> 
         </Pressable>
 
         <Pressable style={({ pressed }) => [styles.botao, pressed && styles.botaoPressionado]} onPress={voltarBiscoito}>
           <Text style={styles.textoBotao}>Voltar</Text>
         </Pressable>
 
-        <Pressable style={({ pressed }) => [styles.botaoLimpar, pressed && styles.botaoLimparPressionado]} onPress={limparContador}>
-          <Text style={styles.textoBotao}>Limpar contador</Text>
-        </Pressable>
+        {ultimaFrase !== "" && (
+          <View style={styles.ultimaCaixa}>
+            <Text style={styles.ultimaTitulo}>📜 Última frase sorteada</Text>
+            <Text style={styles.ultimaFrase}>"{ultimaFrase}"</Text>
+          </View>
+        )}
       </>
       )
       }
-    </View>
+        <Pressable style={({ pressed }) => [styles.botaoLimpar, pressed && styles.botaoLimparPressionado]} onPress={limparContador}>
+          <Text style={styles.textoBotao}>🗑️ Limpar contador</Text>
+        </Pressable>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#8591ff",
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
@@ -187,7 +267,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 12,
     borderColor: "#10164f",
-    borderWidth: 3
+    borderWidth: 3,
+    marginBottom: 10
+  },
+
+  botaoFavorito: {
+    backgroundColor: "#f0a500",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+    marginBottom: 8,
   },
 
   botaoPressionado: {
@@ -195,18 +284,6 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.03 }],
     borderColor: "#252b69",
   },
-
-  botaoSecundario: { 
-    backgroundColor: "#555555", 
-    paddingVertical: 12, 
-    paddingHorizontal: 30, 
-    borderRadius: 12, 
-    marginBottom: 10, 
-  }, 
-
-  botaoSecundarioPressionado: { 
-    backgroundColor: "#333333", 
-  }, 
 
   botaoLimpar: { 
     marginTop: 15, 
@@ -225,5 +302,35 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  avisoFavorito: {
+    fontSize: 14,
+    color: "#353c7c",
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+
+  ultimaCaixa: {
+    width: "100%",
+    backgroundColor: "rgba(255,255,255,0.7)",
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 15,
+  },
+
+  ultimaTitulo: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#353c7c",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+
+  ultimaFrase: {
+    fontSize: 14,
+    color: "#333333",
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });
