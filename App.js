@@ -55,7 +55,7 @@ export default function App() {
             />
           </Pressable>
 
-          <Text style={styles.instrucao}>Toque no biscoito para quebrar</Text>
+          <Text style={styles.instrucao}>Clique no biscoito e se motive !</Text>
         </>
       ) : (
         <>
@@ -90,20 +90,20 @@ const styles = StyleSheet.create({
   },
 
   titulo : {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: "bold",
     color: "#353c7c",
     marginBottom: 30,
   },
 
   imagem: {
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     marginBottom: 20,
   },
 
   instrucao: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#353c7c",
     marginBottom: 20,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
 
   frase: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: "center",
     color: "#333333",
     fontStyle: "italic",
