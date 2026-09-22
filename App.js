@@ -27,6 +27,8 @@ export default function App() {
 
   const [frase, setFrase] = useState("")
   const [aberto, setAberto] = useState(false)
+  const [contador, setContador] = useState(0)
+  const [ultimaFrase, setUltimaFrase] = useState("")
 
   function abrirBiscoito() {
     const indice = Math.floor(Math.random() * frases.length)
@@ -36,14 +38,42 @@ export default function App() {
     setAberto(true)
   }
 
+  function quebrarOutro() {
+    sortearFrase()
+
+    setContador((valorAtual) => valorAtual + 1)
+  }
+
+  function limparContador() {
+    setContador(0);
+    setFrase("")
+    setUltimaFrase("")
+    setAberto(false)
+  }
+
   function voltarBiscoito() {
     setFrase("")
     setAberto(false)
   }
 
+  function sortearFrase() {
+    let indice;
+    let fraseSorteada;
+
+    do {
+      indice = Math.floor(Math.random() * frases.length)
+      fraseSorteada = frases[indice]
+    } while (fraseSorteada === ultimaFrase)
+
+      setFrase(fraseSorteada);
+      setUltimaFrase(fraseSorteada)
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Biscoito da Sorte</Text>
+
+      <Text style={styles.contador}>Biscoitos quebrados: {contador}</Text>
 
       {!aberto ? (
         <>
@@ -70,8 +100,20 @@ export default function App() {
           <Text style={styles.frase}>"{frase}"</Text>
         </View>
 
-        <Pressable style={({pressed}) => [styles.botao, pressed && styles.botaoPressionado]} onPress={voltarBiscoito}>
+        {contador >= 5 && ( 
+          <Text style={styles.mensagemEspecial}> 🎉 Você já quebrou 5 biscoitos! Continue ! </Text> 
+        )}
+
+        <Pressable style={({ pressed }) => [styles.botao, pressed && styles.botaoPressionado]} onPress={quebrarOutro}>
+          <Text style={styles.textoBotao}>Quebrar outro</Text> 
+        </Pressable>
+
+        <Pressable style={({ pressed }) => [styles.botao, pressed && styles.botaoPressionado]} onPress={voltarBiscoito}>
           <Text style={styles.textoBotao}>Voltar</Text>
+        </Pressable>
+
+        <Pressable style={({ pressed }) => [styles.botaoLimpar, pressed && styles.botaoLimparPressionado]} onPress={limparContador}>
+          <Text style={styles.textoBotao}>Limpar contador</Text>
         </Pressable>
       </>
       )
@@ -94,6 +136,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#353c7c",
     marginBottom: 30,
+  },
+
+  contador: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#353c7c",
+    marginBottom: 25,
   },
 
   imagem: {
@@ -124,6 +173,14 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
 
+  mensagemEspecial: {
+    fontSize: 16, 
+    fontWeight: "bold", 
+    color: "#353c7c", 
+    textAlign: "center", 
+    marginBottom: 15,
+  },
+
   botao: {
     backgroundColor: "#353c7c",
     paddingVertical: 14,
@@ -137,6 +194,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#4a52a0",
     transform: [{ scale: 1.03 }],
     borderColor: "#252b69",
+  },
+
+  botaoSecundario: { 
+    backgroundColor: "#555555", 
+    paddingVertical: 12, 
+    paddingHorizontal: 30, 
+    borderRadius: 12, 
+    marginBottom: 10, 
+  }, 
+
+  botaoSecundarioPressionado: { 
+    backgroundColor: "#333333", 
+  }, 
+
+  botaoLimpar: { 
+    marginTop: 15, 
+    backgroundColor: "#8b2635", 
+    paddingVertical: 10, 
+    paddingHorizontal: 20, 
+    borderRadius: 10, 
+  }, 
+  
+  botaoLimparPressionado: { 
+    backgroundColor: "#a83245", 
+    transform: [{ scale: 1.03 }], 
   },
 
   textoBotao: {
