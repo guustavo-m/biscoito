@@ -70,7 +70,7 @@ export default function App() {
           <Text style={styles.frase}>"{frase}"</Text>
         </View>
 
-        <Pressable style={styles.botao} onPress={voltarBiscoito}>
+        <Pressable style={({pressed}) => [styles.botao, pressed && styles.botaoPressionado]} onPress={voltarBiscoito}>
           <Text style={styles.textoBotao}>Voltar</Text>
         </Pressable>
       </>
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#333333",
     fontStyle: "italic",
+    fontWeight: "600"
   },
 
   botao: {
@@ -128,11 +129,19 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 12,
+    borderColor: "#10164f",
+    borderWidth: 3
+  },
+
+  botaoPressionado: {
+    backgroundColor: "#4a52a0",
+    transform: [{ scale: 1.03 }],
+    borderColor: "#252b69",
   },
 
   textoBotao: {
     color: "#FFFFFF",
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "bold",
   },
 });
