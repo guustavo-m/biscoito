@@ -13,6 +13,16 @@ export default function App() {
     "Continue. Até o código perfeito começou com erro.",
     "A sorte ajuda quem também faz o comit.",
     "Respire. Salve. Tente denovo.",
+    "Todo código difícil fica mais fácil depois do primeiro console.log.",
+    "Se deu erro, pelo menos agora você sabe onde não funciona.",
+    "Um commit por vez e o projeto sai do papel.",
+    "Programar é ensinar o computador a cometer erros mais rápido que você.",
+    "Não tenha medo do erro. Tenha medo de não testar.",
+    "Às vezes o código funciona. Às vezes você descobre por quê.",
+    "O segredo não é saber tudo, é saber onde procurar.",
+    "Persistência é apertar F5 mais uma vez e acreditar.",
+    "Código limpo começa com uma mente organizada.",
+    "Confira sempre mais de uma vez. Não custa nada e vale muito."
   ]
 
   const [frase, setFrase] = useState("")
@@ -73,7 +83,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF8E7",
+    backgroundColor: "#8591ff",
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
   titulo : {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#7A4A16",
+    color: "#353c7c",
     marginBottom: 30,
   },
 
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
 
   instrucao: {
     fontSize: 16,
-    color: "#7A4A16",
+    color: "#353c7c",
     marginBottom: 20,
   },
 
@@ -114,7 +124,7 @@ const styles = StyleSheet.create({
   },
 
   botao: {
-    backgroundColor: "#D98620",
+    backgroundColor: "#353c7c",
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 12,
